@@ -1,11 +1,13 @@
-```markdown
 # 🧠 Batch Embedding Proxy
 
 Simple Rust proxy that batches embedding requests and forwards them to an inference server.
 
+---
+
 ## ⚙️ Setup
 
 ### 1. Run the inference container
+
 This uses HuggingFace's inference server with Nomic's embedding model.
 
 ```bash
@@ -14,29 +16,55 @@ ghcr.io/huggingface/text-embeddings-inference:cpu-latest \
 --model-id nomic-ai/nomic-embed-text-v1.5
 ```
 
-### 2. Run the proxy server
+### 2. Clone and run the Rust server
 
 ```bash
-./batch_proxy_task.exe
+git clone https://github.com/X1Vi/batch_proxy_task.git
+cd batch_proxy_task
+cargo run
 ```
 
-The proxy starts on:  
-`http://localhost:3000`
+---
 
-## 🔁 API Usage
+## 📦 API
 
-**Endpoint:**  
-`POST http://localhost:3000/embed`
+### `POST /embed`
 
-**Payload format:**
+Accepts a JSON payload with an array of input strings. Example:
 
 ```json
 {
-  "inputs": ["string1", "string2", "string3"]
+  "inputs": [
+    "What is Vector Search?",
+    "Hello, world!"
+  ]
 }
 ```
 
-### 🧪 Example:
+Response:
+
+```json
+{
+  "embeddings": [
+    [0.011, 0.005, ...],
+    [0.017, 0.002, ...]
+  ]
+}
+```
+
+---
+
+## 🔧 Configuration
+
+You can configure the proxy using environment variables:
+
+- `EMBEDDING_API_URL` (default: `http://localhost:8080`)
+- `BATCH_SIZE` (default: `8`)
+- `BATCH_TIMEOUT_MS` (default: `200`)
+
+---
+
+## 🚀 Example Request
 
 ```bash
 curl -X POST http://localhost:3000/embed \
@@ -44,16 +72,4 @@ curl -X POST http://localhost:3000/embed \
   -d '{"inputs": ["What is Vector Search?", "Hello, world!"]}'
 ```
 
-## ⚡ Benchmark Notes
-
-| Type              | Time      |
-|-------------------|-----------|
-| Single request    | ~5ms avg  |
-| Full batch (8x)   | ~265ms    |
-
-## ⚙️ Config (hardcoded in main.rs)
-
-- Max Batch Size: `8`
-- Max Wait Time: `50ms`
-- Backend URL: `http://localhost:8080/embed`
-```
+---
