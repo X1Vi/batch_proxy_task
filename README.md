@@ -16,7 +16,14 @@ ghcr.io/huggingface/text-embeddings-inference:cpu-latest \
 --model-id nomic-ai/nomic-embed-text-v1.5
 ```
 
-### 2. Clone and run the Rust server
+### 2. Clone and run the Rust server or just use the exe
+
+```bash
+git clone https://github.com/X1Vi/batch_proxy_task.git
+cd batch_proxy_task
+./batch_proxy_task.exe
+```
+
 
 ```bash
 git clone https://github.com/X1Vi/batch_proxy_task.git
