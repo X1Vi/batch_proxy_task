@@ -11,9 +11,7 @@ Simple Rust proxy that batches embedding requests and forwards them to an infere
 This uses HuggingFace's inference server with Nomic's embedding model.
 
 ```bash
-docker run --rm -it -p 8080:80 --pull always \
-ghcr.io/huggingface/text-embeddings-inference:cpu-latest \
---model-id nomic-ai/nomic-embed-text-v1.5
+docker run --rm -it -p 8080:80 --pull always ghcr.io/huggingface/text-embeddings-inference:cpu-latest --model-id sentence-transformers/all-MiniLM-L6-v2
 ```
 
 ### 2. Clone and run the Rust server or just use the exe
