@@ -1,75 +1,35 @@
-# 🧠 Batch Embedding Proxy
+# Auto-Batching Text Embedding Proxy
 
-Simple Rust proxy that batches embedding requests and forwards them to an inference server.
+This project provides an auto-batching proxy service that forwards input text to a local Hugging Face embedding model served via Docker.
 
----
+## Setup
 
-## ⚙️ Setup
+1. Run `.setup_docker.sh` to set up the entire project using Docker.
 
-### 1. Run the inference container
+2. Once the service is running, hit the following endpoint:
 
-This uses HuggingFace's inference server with Nomic's embedding model.
+   POST http://0.0.0.0:3000/embed
 
-```bash
-docker run --rm -it -p 8080:80 --pull always \
-ghcr.io/huggingface/text-embeddings-inference:cpu-latest \
---model-id nomic-ai/nomic-embed-text-v1.5
-```
+   with this JSON body:
 
-### 2. Clone and run the Rust server
+   ```json
+   {
+     "inputs": [
+       "string1",
+       "string2",
+       "strnng3",
+       "string4"
+     ]
+   }
+   ```
 
-```bash
-git clone https://github.com/X1Vi/batch_proxy_task.git
-cd batch_proxy_task
-cargo run
-```
+## Benchmark Logs
 
----
+| Total Time | Tokenization | Queue Time | Inference Time |
+|------------|--------------|------------|----------------|
+| 5.151 ms   | 298.6 µs     | 613.8 µs   | 4.070 ms       |
+| 4.491 ms   | 166.8 µs     | 446.8 µs   | 3.725 ms       |
+| 10.419 ms  | 158.7 µs     | 484.1 µs   | 9.704 ms       |
+| 4.770 ms   | 210.0 µs     | 483.2 µs   | 3.876 ms       |
 
-## 📦 API
-
-### `POST /embed`
-
-Accepts a JSON payload with an array of input strings. Example:
-
-```json
-{
-  "inputs": [
-    "What is Vector Search?",
-    "Hello, world!"
-  ]
-}
-```
-
-Response:
-
-```json
-{
-  "embeddings": [
-    [0.011, 0.005, ...],
-    [0.017, 0.002, ...]
-  ]
-}
-```
-
----
-
-## 🔧 Configuration
-
-You can configure the proxy using environment variables:
-
-- `EMBEDDING_API_URL` (default: `http://localhost:8080`)
-- `BATCH_SIZE` (default: `8`)
-- `BATCH_TIMEOUT_MS` (default: `200`)
-
----
-
-## 🚀 Example Request
-
-```bash
-curl -X POST http://localhost:3000/embed \
-  -H "Content-Type: application/json" \
-  -d '{"inputs": ["What is Vector Search?", "Hello, world!"]}'
-```
-
----
+**Batch Embedding Time (entire batch)**: **239 ms**
